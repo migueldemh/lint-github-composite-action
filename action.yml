@@ -1,0 +1,28 @@
+name: Lint GitHub Actions Workflow Configuration
+
+description: A composite action for linting GitHub Actions workflow configuration.
+
+inputs:
+  go-version:
+    description: The version of Go to use when running `actionslint`.
+    default: 1.26.0
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Go
+      uses: actions/setup-go@7a3fe6cf4cb3a834922a1244abfce67bcef6a0c5 # v6.2.0
+      with:
+        go-version: ${{ inputs.go-version }}
+        cache: false
+
+    - name: Install actionlint
+      run: |
+        go install github.com/rhysd/actionlint/cmd/actionlint@a443f344ff32813837fa49f7aa6cbc478d770e62 # v1.7.9
+      shell: sh
+
+    - name: Lint Workflow Files
+      run: |-
+        actionlint -color
+      shell: sh
